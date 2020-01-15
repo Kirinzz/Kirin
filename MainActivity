@@ -1,0 +1,272 @@
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.media.MediaPlayer;
+import android.os.Bundle;
+import android.os.CountDownTimer;
+import android.telephony.SmsManager;
+import android.view.View;
+import android.widget.Button;
+
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
+
+
+
+import java.util.Random;
+
+
+public class MainActivity extends AppCompatActivity {
+    
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        switch (requestCode)
+        {
+            case MY_PERMISSIONS_REQUEST_SEND_SMS:
+            {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                {
+                    Toast.makeText(this, "İzin Verildi", Toast.LENGTH_LONG).show();
+                }
+                else
+                {
+                    Toast.makeText(this,"İzin Verilmedi", Toast.LENGTH_LONG).show();
+                }
+            }
+            
+            //Uygulamanın SMS iznine sahip olup olmadığını kontrol ettik
+
+        }
+    }
+
+    private static final int MY_PERMISSIONS_REQUEST_SEND_SMS=0;
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED) {
+
+
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.SEND_SMS)) {
+
+            } else {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.SEND_SMS}, MY_PERMISSIONS_REQUEST_SEND_SMS);
+            }
+        }
+        
+        //Uygulama için SMS izni istedik.
+
+        
+        Button addBtn = (Button) findViewById(R.id.addBtn);
+
+//Buton ekledik ve işlevini belirledik.
+        
+        addBtn.setOnClickListener(new View.OnClickListener() {
+
+            public void kontrolet(int gelen)
+            {
+           
+                EditText telno = (EditText) findViewById(R.id.editText);
+                String no=telno.getText().toString();
+                TextView textView2 = (TextView) findViewById(R.id.textView2);
+                TextView textView3 = (TextView) findViewById(R.id.textView3);
+                textView3.setText(Integer.toString(gelen));
+                
+                //Uygulamanın arayüzündeki metin kutularını belirttik ve değişkenlerimizi belirledik.
+
+                MediaPlayer player;
+
+                {
+
+                
+                if(gelen >= 150)
+                {
+                    SmsManager smsManager = SmsManager.getDefault();
+                    smsManager.sendTextMessage(no, null,"Yakınınızın Nabzı Normalin Çok Üstünde" , null,null);
+                    textView2.setText("Yüksek Nabız!");
+
+                    MediaPlayer ring= MediaPlayer.create(MainActivity.this,R.raw.bleep);
+                    ring.start();
+
+                    Toast.makeText(getApplicationContext(),
+                            "Button is clicked", Toast.LENGTH_LONG).show();
+                }
+                else
+                {
+                    if (gelen >= 40) {
+                        textView2.setText("Sağlıklısınız");
+
+                    }
+                    else
+                    {
+                        if (gelen >= 1)
+                        {
+                            SmsManager smsManager = SmsManager.getDefault();
+                            smsManager.sendTextMessage(no, null,"Yakınınız Düşük Nabız Tehlikesi Altında" , null,null);
+                            textView2.setText("Düşük Nabız Tehlikesi!");
+
+                            MediaPlayer ring= MediaPlayer.create(MainActivity.this,R.raw.bleep);
+                            ring.start();
+
+                            Toast.makeText(getApplicationContext(),
+                                    "Acilen 112'yi arayarak yardım çağırın! İlk Yardım servisine bağlanmak için ........ arayın!", Toast.LENGTH_LONG).show();
+
+
+                        }
+                        else
+
+                        {
+                            SmsManager smsManager = SmsManager.getDefault();
+                            smsManager.sendTextMessage(no, null, "Yakınınızın Nabzı Durdu!!!", null,null);
+                            textView2.setText("Nabzınız Durdu!");
+
+                            MediaPlayer ring= MediaPlayer.create(MainActivity.this,R.raw.bleep);
+                            ring.start();
+                        }
+                        
+                        //Nabız kritik seviyelere indiğinde veya çıktığında uygulamanın yapması gereken eylemleri (mesaj atmak, sesli alarm vermek) belirttik.
+                    }
+
+                }
+
+            }
+
+                return;
+            }
+           
+            
+            @Override
+            public void onClick(View v) {
+
+
+
+
+
+                new CountDownTimer(60000, 1000) {
+                    int say = 0;
+
+                    public void onTick(long millisUntilFinished) {
+                        say = say + 1;
+                        Random r = new Random();
+                        if (say < 3) {
+                            int rdm = r.nextInt(5) + 80;
+                            kontrolet(rdm);
+                        } else {
+                            if (say < 6) {
+                                int rdm = r.nextInt(5) + 75;
+                                kontrolet(rdm);
+                            } else {
+                                if (say < 9) {
+                                    int rdm = r.nextInt(5) + 70;
+                                    kontrolet(rdm);
+                                } else {
+                                    if (say < 12)
+                                    {
+                                        int rdm = r.nextInt(5)+65;
+                                        kontrolet(rdm);
+                                    } else {
+                                        if (say < 18)
+                                        {
+                                            int rdm = r.nextInt(5)+60;
+                                            kontrolet(rdm);
+                                        } else {
+                                            if (say < 24)
+                                            {
+                                                int rdm = r.nextInt(5)+55;
+                                                kontrolet(rdm);
+                                            } else {
+                                                if (say < 27)
+                                                {
+                                                    int rdm = r.nextInt(10)+50;
+                                                    kontrolet(rdm);
+                                                } else {
+                                                    if (say < 30)
+                                                    {
+                                                        int rdm = r.nextInt(5)+45;
+                                                        kontrolet(rdm);
+                                                    } else {
+                                                        if (say < 33)
+                                                        {
+                                                            int rdm = r.nextInt(5)+37;
+                                                            kontrolet(rdm);
+                                                        } else {
+                                                            if (say < 36)
+                                                            {
+                                                                int rdm = r.nextInt(5)+30;
+                                                                kontrolet(rdm);
+                                                            } else {
+                                                                if (say < 39)
+                                                                {
+                                                                    int rdm = r.nextInt(5)+25;
+                                                                    kontrolet(rdm);
+                                                                } else {
+                                                                    if (say < 42)
+                                                                    {
+                                                                        int rdm = r.nextInt(5)+20;
+                                                                        kontrolet(rdm);
+                                                                    } else {
+                                                                        if (say < 45)
+                                                                        {
+                                                                            int rdm = r.nextInt(5)+15;
+                                                                            kontrolet(rdm);
+                                                                        } else {
+                                                                            if (say < 48) {
+                                                                                int rdm = r.nextInt(5) + 10;
+                                                                                kontrolet(rdm);
+                                                                            } else {
+                                                                                if (say < 51) {
+                                                                                    int rdm = r.nextInt(5) + 5;
+                                                                                    kontrolet(rdm);
+                                                                                } else {
+                                                                                    if (say < 54) {
+                                                                                        int rdm = r.nextInt(5) + 1;
+                                                                                        kontrolet(rdm);
+                                                                                    } else {
+                                                                                        if (say < 57)
+                                                                                        {
+                                                                                            int rdm =0;
+                                                                                            kontrolet(rdm);
+                                                                                        }
+                                                                                    }
+                                                                                    
+                                                                                    //Kademeli olarak azalan bir rastgele sayı ürettik
+                                                                                    
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+
+
+
+
+                    public void onFinish() {
+                    }
+                }.start();
+
+
+            };
+        });
+    }};
